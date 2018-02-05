@@ -22,10 +22,11 @@ func (t *TelegramConfig) FullURL(uri string) string {
 var Telegram TelegramConfig
 
 func init() {
-	if _, err := os.Stat("config/telegram_config.json"); os.IsNotExist(err) {
-		log.Panicln(err)
+	var configFile = "config/telegram_config.json"
+	if _, err := os.Stat(configFile); os.IsNotExist(err) {
+		log.Panicf("Missing Config: file %s was not found. \n", configFile)
 	}
-	if err := configor.Load(&Telegram, "config/telegram_config.json"); err != nil {
+	if err := configor.Load(&Telegram, configFile); err != nil {
 		log.Panicln(err)
 	}
 }
