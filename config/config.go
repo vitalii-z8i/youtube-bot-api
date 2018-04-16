@@ -36,11 +36,19 @@ func (db *DatabaseConfig) Connect() {
 	db.Connection = sess
 }
 
+// BotConfig contains bot-related configuration
+type BotConfig struct {
+	Commands []string
+}
+
 // Telegram is an instance of TelegramConfig
 var Telegram TelegramConfig
 
 // DB connection instance
 var DB DatabaseConfig
+
+// BotSettings list of supported commands and maybe other bot-related stuff
+var BotSettings BotConfig
 
 func init() {
 	var tgConfigFile = "config/telegram_config.json"
@@ -56,6 +64,14 @@ func init() {
 		log.Panicf("Missing Config: file %s was not found. \n", dbConfigFile)
 	}
 	if err := configor.Load(&DB, dbConfigFile); err != nil {
+		log.Panicln(err)
+	}
+
+	var botConfFile = "config/bot_config.json"
+	if _, err := os.Stat(botConfFile); os.IsNotExist(err) {
+		log.Panicf("Missing Config: file %s was not found. \n", botConfFile)
+	}
+	if err := configor.Load(&BotSettings, botConfFile); err != nil {
 		log.Panicln(err)
 	}
 }

@@ -11,7 +11,7 @@ import (
 )
 
 // SendMessage sends a reply to a telegram chat
-func SendMessage(chat entities.Chat, message string) (err error) {
+func SendMessage(chat *entities.Chat, message string) (err error) {
 	if chat.ID == 0 || message == "" {
 		err = errors.New("Missing Data (Re-check your chat Id and Message)")
 		return err
@@ -35,7 +35,7 @@ func SendMessage(chat entities.Chat, message string) (err error) {
 }
 
 // SendTypingAction lets user know, that bot is working on it
-func SendTypingAction(chat entities.Chat) (err error) {
+func SendTypingAction(chat *entities.Chat) (err error) {
 	if chat.ID == 0 {
 		err = errors.New("Missing Data (Re-check your chat Id and Message)")
 		return err
