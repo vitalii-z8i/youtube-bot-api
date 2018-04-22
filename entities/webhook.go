@@ -36,14 +36,10 @@ func (wh *Webhook) StoreWebhookInfo() (Message, error) {
 		return wh.Message, err
 	}
 
-	if chatExists, _ := config.DB.Connection.Collection("chats").Find("ID", chat.ID).Exists(); !chatExists {
-		_, err = config.DB.Connection.Collection("chats").Insert(&chat)
-	}
-
 	tx, _ := config.DB.Connection.NewTx(nil)
-	chat.LastMessage().One(&lastMessage)
 	message.FromID = user.ID
 	message.ChatID = chat.ID
+	message.ChatLastMessage().One(&lastMessage)
 	message.PrevID = sql.NullInt64{Int64: lastMessage.ID, Valid: (lastMessage.ID != 0)}
 
 	_, err = tx.Collection("messages").Insert(&message)
