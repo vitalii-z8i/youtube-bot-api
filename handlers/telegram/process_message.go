@@ -1,4 +1,4 @@
-package handlers
+package telegram
 
 import (
 	"log"
@@ -6,12 +6,12 @@ import (
 
 	"github.com/vtl-pol/youtube-bot-api/controllers"
 	"github.com/vtl-pol/youtube-bot-api/entities"
-	"github.com/vtl-pol/youtube-bot-api/services"
+	"github.com/vtl-pol/youtube-bot-api/services/msgutils"
 )
 
 // ProcessMessage analyzes text and calls according service
 func ProcessMessage(message *entities.Message) (err error) {
-	err = services.SendTypingAction(&message.Chat)
+	err = msgutils.SendTypingAction(&message.Chat)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -27,12 +27,12 @@ func ProcessMessage(message *entities.Message) (err error) {
 	case strings.Contains(message.Text, "/unsubscribe"):
 		err = controllers.Unsubscribe(message)
 	default:
-		services.SendMessage(&message.Chat, "Yeah... About that")
-		services.SendTypingAction(&message.Chat)
-		services.SendMessage(&message.Chat, "I'dont have the code to do that thing, yet...")
-		services.SendMessage(&message.Chat, "But soon...")
+		msgutils.SendMessage(&message.Chat, "Yeah... About that")
+		msgutils.SendTypingAction(&message.Chat)
+		msgutils.SendMessage(&message.Chat, "I'dont have the code to do that thing, yet...")
+		msgutils.SendMessage(&message.Chat, "But soon...")
 
-		err = services.SendMessage(&message.Chat, "/start - Back to menu")
+		err = msgutils.SendMessage(&message.Chat, "/start - Back to menu")
 	}
 
 	return err

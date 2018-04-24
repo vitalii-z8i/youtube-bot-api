@@ -1,4 +1,4 @@
-package handlers
+package telegram
 
 import (
 	"encoding/json"
@@ -9,7 +9,7 @@ import (
 
 	"github.com/vtl-pol/youtube-bot-api/config"
 	"github.com/vtl-pol/youtube-bot-api/entities"
-	"github.com/vtl-pol/youtube-bot-api/services"
+	"github.com/vtl-pol/youtube-bot-api/services/msgutils"
 )
 
 // ProcessWebhook parses request body from Telegram into a system Webhook entity
@@ -28,7 +28,7 @@ func ProcessWebhook(respose http.ResponseWriter, request *http.Request) {
 	}
 	log.Printf("PARAMETERS: %s", rawBody)
 	if err = json.Unmarshal(rawBody, &webhook); err != nil {
-		services.SendMessage(&webhook.Message.Chat, errorMessage)
+		msgutils.SendMessage(&webhook.Message.Chat, errorMessage)
 		log.Println(err)
 		fmt.Fprintf(respose, "%s", "Error has occured")
 
@@ -37,11 +37,11 @@ func ProcessWebhook(respose http.ResponseWriter, request *http.Request) {
 	fmt.Fprintf(respose, "%s", "Accepted")
 
 	if webhook.Message.ID != 0 {
-		services.SendTypingAction(&webhook.Message.Chat)
+		msgutils.SendTypingAction(&webhook.Message.Chat)
 		var message entities.Message
 		var err error
 		if message, err = webhook.StoreWebhookInfo(); err != nil {
-			services.SendMessage(&webhook.Message.Chat, errorMessage)
+			msgutils.SendMessage(&webhook.Message.Chat, errorMessage)
 		} else {
 			ProcessMessage(&message)
 		}
@@ -56,7 +56,7 @@ func ProcessWebhook(respose http.ResponseWriter, request *http.Request) {
 		defer config.DB.Connection.Close()
 		_, err := config.DB.Connection.Update("messages").Set("Text", webhook.EditedMessage.Text).Where("ID", webhook.EditedMessage.ID).Exec()
 		if err != nil {
-			services.SendMessage(&webhook.EditedMessage.Chat, "Sorry pal, I'm unable to update your message. Guess, it's out there for ever")
+			msgutils.SendMessage(&webhook.EditedMessage.Chat, "Sorry pal, I'm unable to update your message. Guess, it's out there for ever")
 			log.Println(err)
 			return
 		}

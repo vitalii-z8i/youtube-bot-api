@@ -1,7 +1,8 @@
-package services
+package msgutils
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -10,8 +11,36 @@ import (
 	"github.com/vtl-pol/youtube-bot-api/entities"
 )
 
+// Keyboard - A struct to append an inline keyboard to a message
+type Keyboard struct {
+	KeyboardType string
+	Keys         []byte
+}
+
 // SendMessage sends a reply to a telegram chat
 func SendMessage(chat *entities.Chat, message string) (err error) {
+	if chat.ID == 0 || message == "" {
+		err = errors.New("Missing Data (Re-check your chat Id and Message)")
+		return err
+	}
+
+	req, err := http.NewRequest("GET", config.Telegram.FullURL("sendMessage"), nil)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	query := req.URL.Query()
+	query.Add("chat_id", strconv.Itoa(int(chat.ID)))
+	query.Add("text", message)
+
+	req.URL.RawQuery = query.Encode()
+	_, err = http.Get(req.URL.String())
+
+	return err
+}
+
+// SendMessageWithKeyboard is just like SendMessage only with the keyboard
+func SendMessageWithKeyboard(chat *entities.Chat, message string, replyMarkup Keyboard) (err error) {
 	if chat.ID == 0 || message == "" {
 		err = errors.New("Missing Data (Re-check your chat Id and Message)")
 		return err
@@ -26,10 +55,12 @@ func SendMessage(chat *entities.Chat, message string) (err error) {
 	query := req.URL.Query()
 	query.Add("chat_id", strconv.Itoa(int(chat.ID)))
 	query.Add("text", message)
+	markupString := fmt.Sprintf("{\"%s\":%s}", "inline_keyboard", replyMarkup.Keys)
+	query.Add("reply_markup", markupString)
 	req.URL.RawQuery = query.Encode()
 
-	//TODO: Add response check here!!!
-	http.Get(req.URL.String())
+	log.Println("==========", req.URL.String(), "==========")
+	_, err = http.Get(req.URL.String())
 
 	return err
 }
@@ -54,4 +85,9 @@ func SendTypingAction(chat *entities.Chat) (err error) {
 
 	_, err = http.Get(req.URL.String())
 	return err
+}
+
+// GenerateKeyboard prepares a keyboard for a message
+func GenerateKeyboard(ktype string, keys []byte) Keyboard {
+	return Keyboard{KeyboardType: ktype, Keys: keys}
 }

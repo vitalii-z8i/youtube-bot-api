@@ -9,7 +9,7 @@ import (
 	_ "github.com/golang-migrate/migrate/source/file"
 
 	"github.com/vtl-pol/youtube-bot-api/config"
-	"github.com/vtl-pol/youtube-bot-api/handlers"
+	"github.com/vtl-pol/youtube-bot-api/handlers/telegram"
 )
 
 func main() {
@@ -19,9 +19,9 @@ func main() {
 	if err != nil {
 		log.Panicln(err)
 	}
-	m.Steps(4)
+	m.Steps(5)
 
-	http.HandleFunc("/tg", handlers.ProcessWebhook)
+	http.HandleFunc("/tg", telegram.ProcessWebhook)
 
 	log.Println("Started a web server on 8000 port (http://127.0.0.1:8000/)")
 	log.Fatal(http.ListenAndServe(":8000", nil))

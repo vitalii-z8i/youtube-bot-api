@@ -36,11 +36,19 @@ func (db *DatabaseConfig) Connect() {
 	db.Connection = sess
 }
 
+// YouTubeConfig holds configuration for YouTube API
+type YouTubeConfig struct {
+	DeveloperKey string
+}
+
 // Telegram is an instance of TelegramConfig
 var Telegram TelegramConfig
 
 // DB connection instance
 var DB DatabaseConfig
+
+// YT is a YouTube config holder
+var YT YouTubeConfig
 
 func init() {
 	var tgConfigFile = "config/telegram_config.json"
@@ -56,6 +64,14 @@ func init() {
 		log.Panicf("Missing Config: file %s was not found. \n", dbConfigFile)
 	}
 	if err := configor.Load(&DB, dbConfigFile); err != nil {
+		log.Panicln(err)
+	}
+
+	var ytConfigFile = "config/youtube_config.json"
+	if _, err := os.Stat(ytConfigFile); os.IsNotExist(err) {
+		log.Panicf("Missing Config: file %s was not found. \n", ytConfigFile)
+	}
+	if err := configor.Load(&YT, ytConfigFile); err != nil {
 		log.Panicln(err)
 	}
 }

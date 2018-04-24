@@ -3,7 +3,7 @@ package controllers
 import (
 	"log"
 
-	"github.com/vtl-pol/youtube-bot-api/services"
+	"github.com/vtl-pol/youtube-bot-api/services/msgutils"
 
 	"github.com/vtl-pol/youtube-bot-api/config"
 	"github.com/vtl-pol/youtube-bot-api/entities"
@@ -22,13 +22,13 @@ func ListChannels(m *entities.Message) (err error) {
 
 	if len(channels) == 0 {
 
-		err = services.SendMessage(&m.Chat, "You haven't subscribed to any channels yet")
+		err = msgutils.SendMessage(&m.Chat, "You haven't subscribed to any channels yet")
 		if err != nil {
 			log.Println(err)
 			return err
 		}
 
-		err = services.SendMessage(&m.Chat, "Let's just hit /subscribe and get the first one \U0001F609")
+		err = msgutils.SendMessage(&m.Chat, "Let's just hit /subscribe and get the first one \U0001F609")
 		if err != nil {
 			log.Println(err)
 			return err
