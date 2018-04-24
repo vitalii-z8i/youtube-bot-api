@@ -36,8 +36,8 @@ func ProcessWebhook(respose http.ResponseWriter, request *http.Request) {
 	}
 	fmt.Fprintf(respose, "%s", "Accepted")
 
+	msgutils.SendTypingAction(&webhook.Message.Chat)
 	if webhook.Message.ID != 0 {
-		msgutils.SendTypingAction(&webhook.Message.Chat)
 		var message entities.Message
 		var err error
 		if message, err = webhook.StoreWebhookInfo(); err != nil {
@@ -62,5 +62,22 @@ func ProcessWebhook(respose http.ResponseWriter, request *http.Request) {
 		}
 
 		return
+	}
+
+	if webhook.CallbackQuery.ID != "" {
+		config.DB.Connect()
+		err := config.DB.Connection.Collection("messages").Find("ID = ?", webhook.CallbackQuery.Message.ID).One(&webhook.CallbackQuery.Message)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		if webhook.CallbackQuery.Message.ActionTrigger != "" {
+			webhook.CallbackQuery.Message.Chat.ID = webhook.CallbackQuery.Message.ChatID
+			err = ProcessMessageCallback(&webhook.CallbackQuery.Message, webhook.CallbackQuery.Data)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+		}
 	}
 }

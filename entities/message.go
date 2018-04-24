@@ -19,7 +19,7 @@ type Message struct {
 	Text          string        `json:"text" db:"Text,omitempty"`
 	PrevID        sql.NullInt64 `db:"PrevID,omitempty"`
 	NextID        sql.NullInt64 `db:"NextID,omitempty"`
-	ActionTrigger string        `db:"ActionTriger,omitempty"`
+	ActionTrigger string        `db:"ActionTrigger"`
 }
 
 // ChatLastMessage Grabs a last message from current Chat
@@ -40,7 +40,9 @@ func (m *Message) ArgsAfterCommand(command string) (result string) {
 }
 
 // SetActionTrigger - Marks a message as an action trigger to know, what to do with the next one
-func (m *Message) SetActionTrigger(action string) {
+func (m *Message) SetActionTrigger(action string) (err error) {
+	config.DB.Connect()
+	defer config.DB.Connection.Close()
 	m.ActionTrigger = action
-	config.DB.Connection.Collection("messages").UpdateReturning(m)
+	return config.DB.Connection.Collection("messages").UpdateReturning(m)
 }

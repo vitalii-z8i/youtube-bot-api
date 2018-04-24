@@ -12,6 +12,11 @@ type Webhook struct {
 	ID            int64   `json:"update_id"`
 	Message       Message `json:"message,omitempty"`
 	EditedMessage Message `json:"edited_message,omitempty"`
+	CallbackQuery struct {
+		ID      string  `json:"id,omitempty"`
+		Message Message `json:"message,omitempty"`
+		Data    string  `json:"data,omitempty"`
+	} `json:"callback_query,omitempty"`
 }
 
 // StoreWebhookInfo saves information from webhooks into DB
@@ -39,6 +44,7 @@ func (wh *Webhook) StoreWebhookInfo() (Message, error) {
 	tx, _ := config.DB.Connection.NewTx(nil)
 	message.FromID = user.ID
 	message.ChatID = chat.ID
+
 	message.ChatLastMessage().One(&lastMessage)
 	message.PrevID = sql.NullInt64{Int64: lastMessage.ID, Valid: (lastMessage.ID != 0)}
 

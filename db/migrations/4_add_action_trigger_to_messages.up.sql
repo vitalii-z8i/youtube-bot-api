@@ -1,2 +1,2 @@
 ALTER TABLE messages
-    ADD AcitonTrigger varchar
+    ADD ActionTrigger varchar

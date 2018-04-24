@@ -22,13 +22,13 @@ func ListChannels(m *entities.Message) (err error) {
 
 	if len(channels) == 0 {
 
-		err = msgutils.SendMessage(&m.Chat, "You haven't subscribed to any channels yet")
+		_, err = msgutils.SendMessage(&m.Chat, "You haven't subscribed to any channels yet")
 		if err != nil {
 			log.Println(err)
 			return err
 		}
 
-		err = msgutils.SendMessage(&m.Chat, "Let's just hit /subscribe and get the first one \U0001F609")
+		_, err = msgutils.SendMessage(&m.Chat, "Let's just hit /subscribe and get the first one \U0001F609")
 		if err != nil {
 			log.Println(err)
 			return err

@@ -1,2 +1,2 @@
 ALTER TABLE messages
-    DROP AcitonTrigger
+    DROP ActionTrigger

@@ -21,20 +21,19 @@ func Unsubscribe(m *entities.Message) (err error) {
 	}
 
 	if len(channels) == 0 {
-		err = msgutils.SendMessage(&m.Chat, "You haven't subscribed to any channels, so... Job's done, I guess \U0001f604")
+		_, err = msgutils.SendMessage(&m.Chat, "You haven't subscribed to any channels, so... Job's done, I guess \U0001f604")
 		if err != nil {
 			log.Println(err)
 			return err
 		}
 
-		err = msgutils.SendMessage(&m.Chat, "Anyways, I have a better idea. Let's /subscribe to a new channel instead \U0001F609")
+		_, err = msgutils.SendMessage(&m.Chat, "Anyways, I have a better idea. Let's /subscribe to a new channel instead \U0001F609")
 		if err != nil {
 			log.Println(err)
 			return err
 		}
 	} else {
-		m.SetActionTrigger("channel_search")
-		err = msgutils.SendMessage(&m.Chat, "You got it! Enter a name of a channel, you'd like to subscribe to and I'll do the job:")
+		_, err = msgutils.SendMessage(&m.Chat, "You got it! Enter a name of a channel, you'd like to subscribe to and I'll do the job:")
 	}
 
 	return err

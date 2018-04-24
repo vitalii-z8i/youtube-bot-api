@@ -2,12 +2,12 @@ package entities
 
 // Subscription contains an info of subscribed channels
 type Subscription struct {
-	ID      int64 `db:"ID"`
-	UserID  int64 `db:"UserID"`
-	Channel YTChannel
-	// ChannelID   string  `db:"ChannelID"`
-	// ChannelName string `db:"ChannelName"`
-	// ChannelInfo string `db:"ChannelInfo"`
+	ID          int64  `db:"ID"`
+	UserID      int64  `db:"UserID"`
+	ChannelID   string `db:"ChannelID"`
+	ChannelName string `db:"ChannelName"`
+	ChannelInfo string `db:"ChannelInfo"`
+	Channel     YTChannel
 }
 
 // YTChannel contains basic info of YT channel itself
