@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS subscriptions (
-    ID integer PRIMARY KEY,
+    ID integer PRIMARY KEY AUTOINCREMENT,
     UserID integer,
     ChannelID varchar,
     ChannelName varchar,

@@ -1,6 +1,7 @@
 package telegram
 
 import (
+	"fmt"
 	"log"
 	"strings"
 
@@ -54,7 +55,7 @@ func ProcessActionTrigger(message *entities.Message) (err error) {
 	case "":
 		msgutils.SendMessage(&message.Chat, "Yeah... About that")
 		msgutils.SendTypingAction(&message.Chat)
-		msgutils.SendMessage(&message.Chat, "I'dont have the code to do that thing, yet...\nBut soon...")
+		msgutils.SendMessage(&message.Chat, "I'm not really good with non-standart messages, so...\nLet's just keep it simple, OK?\U0001F609")
 	case "channel_search":
 		err = controllers.DisplayChannelsSearch(message.Text, message)
 	}
@@ -70,10 +71,15 @@ func ProcessMessageCallback(message *entities.Message, callBackData string) (err
 	case "":
 		msgutils.SendMessage(&message.Chat, "Yeah... About that")
 		msgutils.SendTypingAction(&message.Chat)
-		msgutils.SendMessage(&message.Chat, "I'dont have the code to do that thing, yet...\nBut soon...")
+		msgutils.SendMessage(&message.Chat, "I'm not really good with non-standart messages, so...\nLet's just keep it simple, OK?\U0001F609")
 	case "confirm_subscription":
-		msgutils.SendMessage(&message.Chat, "I can TOTALLY do that!")
-		msgutils.SendMessage(&message.Chat, "But in like two hours or so...")
+		newSub, err := controllers.ConfirmSubscription(message, callBackData)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+		msgutils.SendMessage(&message.Chat, fmt.Sprintf("All done! You've subscribed to \"%s\" channel.\n", newSub.ChannelName))
+		msgutils.SendMessage(&message.Chat, "You'll receive new videos as they're published")
 	}
 
 	return err

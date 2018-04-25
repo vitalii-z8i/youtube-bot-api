@@ -50,3 +50,29 @@ func ChannelsSearch(keyword string) (finalResult [][]entities.YTChannel, err err
 	return finalResult, err
 
 }
+
+// FindChannel fetches YT channel by ID
+func FindChannel(ID string) (channel entities.YTChannel, err error) {
+	client := &http.Client{
+		Transport: &transport.APIKey{Key: config.YT.DeveloperKey},
+	}
+
+	ytClient, err := youtube.New(client)
+	if err != nil {
+		log.Printf("Error creating new YouTube client: %v\n", err)
+		return channel, err
+	}
+	call := ytClient.Channels.List("snippet").Id(ID)
+
+	response, err := call.Do()
+	if err != nil {
+		log.Printf("Error making search API call: %v", err)
+		return channel, err
+	}
+
+	channel.ChannelID = response.Items[0].Id
+	channel.ChannelName = response.Items[0].Snippet.Title
+	channel.ChannelInfo = response.Items[0].Snippet.Description
+
+	return channel, err
+}

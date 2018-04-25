@@ -82,3 +82,28 @@ func DisplayChannelsSearch(messageText string, m *entities.Message) (err error) 
 	}
 	return err
 }
+
+// ConfirmSubscription creates a subscription for selected channel
+func ConfirmSubscription(m *entities.Message, channelID string) (newSub entities.Subscription, err error) {
+	config.DB.Connect()
+	defer config.DB.Connection.Close()
+	channel, err := ytutils.FindChannel(channelID)
+	if err != nil {
+		log.Println(err)
+		return newSub, err
+	}
+
+	newSub = entities.Subscription{UserID: m.FromID, ChannelID: channel.ChannelID, ChannelName: channel.ChannelName, ChannelInfo: channel.ChannelInfo}
+	err = config.DB.Connection.Collection("subscriptions").InsertReturning(&newSub)
+	if err != nil {
+		log.Println(err)
+		return newSub, err
+	}
+	err = newSub.Subscribe()
+	if err != nil {
+		log.Println(err)
+		return newSub, err
+	}
+
+	return newSub, err
+}

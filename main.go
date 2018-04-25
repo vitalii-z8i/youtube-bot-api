@@ -21,6 +21,8 @@ func main() {
 	}
 	m.Steps(5)
 
+	go config.SubClient.Start()
+
 	http.HandleFunc("/tg", telegram.ProcessWebhook)
 
 	log.Println("Started a web server on 8000 port (http://127.0.0.1:8000/)")

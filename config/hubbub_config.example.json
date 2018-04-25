@@ -1,0 +1,5 @@
+{
+    "Host": "N/A",
+    "HubURL": "https://pubsubhubbub.appspot.com/subscribe",
+    "TopicURL": "https://www.youtube.com/xml/feeds/videos.xml?channel_id="
+}
