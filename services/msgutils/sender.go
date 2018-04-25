@@ -82,7 +82,6 @@ func SendMessageWithKeyboard(chat *entities.Chat, message string, replyMarkup Ke
 	query.Add("reply_markup", markupString)
 	req.URL.RawQuery = query.Encode()
 
-	log.Println("==========", req.URL.String(), "==========")
 	response, err := http.Get(req.URL.String())
 	if err != nil {
 		log.Println(err)
